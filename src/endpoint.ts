@@ -1,5 +1,10 @@
 import { defaultEndpointsFactory } from "express-zod-api"
-import {inputAdminInitSchema, outputAdminInitSchema} from "./zodSchema";
+import {
+    inputAdminInitSchema,
+    inputTenantLoginSchema,
+    outputAdminInitSchema,
+    outputTenantLoginSchema
+} from "./zodSchema";
 import { citizenService } from "./citizenService";
 
 
@@ -9,5 +14,14 @@ export const presidentInitEndpoint = defaultEndpointsFactory.build({
     output: outputAdminInitSchema,
     handler: async ({input, options, logger }) => {
         return citizenService.presidentInit(input)
+    },
+})
+
+export const tenantLoginEndpoint = defaultEndpointsFactory.build({
+    method: "post",
+    input: inputTenantLoginSchema,
+    output: outputTenantLoginSchema,
+    handler: async ({input, options, logger }) => {
+        return citizenService.tenantLogin(input)
     },
 })
