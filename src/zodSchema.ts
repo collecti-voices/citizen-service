@@ -8,13 +8,13 @@ export const citizenSchema = z.object({
     _id: z.any(),
     type: citizenTypeSchema,
     blockId: z.string(),
-    telegramUserId: z.string(),
+    telegramUserId: z.number(),
     createdAt: z.date(),
     updatedAt: z.date()
 })
 
 export const inputAdminInitSchema = z.object({
-    telegramUserId: z.string()
+    telegramUserId: z.number()
 })
 
 export const outputAdminInitSchema = z.object({
@@ -22,9 +22,24 @@ export const outputAdminInitSchema = z.object({
     qrCode: z.string()
 })
 
+export const inputPresidentDeleteSchema = z.object({
+    telegramUserId: z.string().transform((value) => parseInt(value))
+})
+
+export const outputPresidentDeleteSchema = z.object({
+    blockId: z.string()
+})
+
 export const inputTenantLoginSchema = z.object({
     blockId: z.string(),
-    telegramUserId: z.string()
+    telegramUserId: z.number()
 })
 
 export const outputTenantLoginSchema = citizenSchema
+export const inputTenantLogoutSchema = z.object({
+    telegramUserId: z.string().transform((value) => parseInt(value))
+})
+
+export const outputTenantLogoutSchema = z.object({
+    blockId: z.string()
+})

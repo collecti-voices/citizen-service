@@ -3,17 +3,14 @@ import {Citizen, CitizenTypes} from "./types";
 
 class CitizenDbController {
 
-    isPresidentExists = async (telegramUserId: string): Promise<boolean> => {
-        const president = await citizenMongooseModel.exists({
+    getPresident = async (telegramUserId: number): Promise<Citizen | null> => {
+        return await citizenMongooseModel.findOne({
             type: CitizenTypes.President,
             telegramUserId
         }).exec()
-
-        return president !== null
-
     }
 
-    presidentInit = async (blockId: string, telegramUserId: string): Promise<Citizen> => {
+    presidentInit = async (blockId: string, telegramUserId: number): Promise<Citizen> => {
 
         const newCitizen = new citizenMongooseModel({
             type: CitizenTypes.President,
@@ -24,17 +21,15 @@ class CitizenDbController {
         return await newCitizen.save()
     }
 
-    isExistTenant = async (telegramUserId: string, blockId: string): Promise<boolean> => {
-        const tenant = await citizenMongooseModel.exists({
+    getTenant = async (telegramUserId: number, blockId: string): Promise<Citizen | null> => {
+        return await citizenMongooseModel.findOne({
             type: CitizenTypes.Tenant,
             telegramUserId,
             blockId
         }).exec()
-
-        return tenant !== null
     }
 
-    tenantLogin = async (blockId: string, telegramUserId: string): Promise<Citizen> => {
+    tenantLogin = async (blockId: string, telegramUserId: number): Promise<Citizen> => {
         const newCitizen = new citizenMongooseModel({
             type: CitizenTypes.Tenant,
             blockId,
@@ -42,6 +37,25 @@ class CitizenDbController {
         })
 
         return await newCitizen.save()
+    }
+
+    getCitizenByTelegramUserId = async (telegramUserId: number): Promise<Citizen | null> => {
+        return await citizenMongooseModel.findOne({
+            telegramUserId
+        }).exec()
+    }
+
+    deleteAllCitizensByBlockId = async (blockId: string): Promise<void> => {
+        await citizenMongooseModel.deleteMany({
+            blockId
+        }).exec()
+    }
+
+    tenantLogout = async (telegramUserId: number, blockId: string): Promise<void> => {
+        await citizenMongooseModel.deleteOne({
+            telegramUserId,
+            blockId
+        }).exec()
     }
 
 }

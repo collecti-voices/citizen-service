@@ -7,9 +7,15 @@ export type MongooseDocument = Document & Citizen
 export const mongooseSchema: mongoose.Schema = new mongoose.Schema({
     type: String,
     blockId: String,
-    telegramUserId: String
+    telegramUserId: Number
 }, {
-    timestamps: true
+    timestamps: true,
+})
+
+mongooseSchema.index({
+    telegramUserId: 1, blockId: 1
+}, {
+    unique: true
 })
 
 export const citizenMongooseModel = mongoose.model<MongooseDocument>("citizen", mongooseSchema)
