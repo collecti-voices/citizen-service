@@ -1,5 +1,5 @@
 import {citizenMongooseModel} from "./mongooseSchema";
-import {Citizen, CitizenTypes} from "./types";
+import {Citizen, CitizenTypes, InputAdminInit, InputTenantLoginSchema} from "./types";
 
 class CitizenDbController {
 
@@ -10,12 +10,19 @@ class CitizenDbController {
         }).exec()
     }
 
-    presidentInit = async (blockId: string, telegramUserId: number): Promise<Citizen> => {
+    getPresidentByBlockId = async (blockId: string): Promise<Citizen | null> => {
+        return await citizenMongooseModel.findOne({
+            type: CitizenTypes.President,
+            blockId
+        }).exec()
+    }
+
+    presidentInit = async (blockId: string, inputAdminInit: InputAdminInit): Promise<Citizen> => {
 
         const newCitizen = new citizenMongooseModel({
             type: CitizenTypes.President,
             blockId,
-            telegramUserId
+            ...inputAdminInit
         })
 
         return await newCitizen.save()
@@ -29,11 +36,10 @@ class CitizenDbController {
         }).exec()
     }
 
-    tenantLogin = async (blockId: string, telegramUserId: number): Promise<Citizen> => {
+    tenantLogin = async (inputTenantLoginSchema: InputTenantLoginSchema): Promise<Citizen> => {
         const newCitizen = new citizenMongooseModel({
             type: CitizenTypes.Tenant,
-            blockId,
-            telegramUserId
+            ...inputTenantLoginSchema
         })
 
         return await newCitizen.save()

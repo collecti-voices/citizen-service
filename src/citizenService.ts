@@ -1,10 +1,12 @@
 import {
+    Citizen,
     CitizenTypes,
     InputAdminInit,
+    InputPresidentDelete,
     InputTenantLoginSchema,
     InputTenantLogoutSchema,
     OutputAdminInit,
-    OutputPresidentDeleteSchema,
+    OutputPresidentDelete,
     OutputTenantLoginSchema,
     OutputTenantLogoutSchema
 } from "./types";
@@ -20,7 +22,7 @@ export const presidentInit = async (inputAdminInit: InputAdminInit): Promise<Out
         const blockId = Math.random().toString(36).substring(7)
 
         president = await citizenDbController
-            .presidentInit(blockId, inputAdminInit.telegramUserId)
+            .presidentInit(blockId, inputAdminInit)
     }
 
     const url = `https://t.me/${process.env.TELEGRAM_BOT_USERNAME}?start=${president.blockId}`
@@ -34,7 +36,7 @@ export const presidentInit = async (inputAdminInit: InputAdminInit): Promise<Out
     }
 }
 
-export const presidentDelete = async (inputPresidentDeleteSchema: InputAdminInit): Promise<OutputPresidentDeleteSchema> => {
+export const presidentDelete = async (inputPresidentDeleteSchema: InputPresidentDelete): Promise<OutputPresidentDelete> => {
     const president = await citizenDbController.getPresident(inputPresidentDeleteSchema.telegramUserId)
 
     if (!president) {
@@ -49,20 +51,32 @@ export const presidentDelete = async (inputPresidentDeleteSchema: InputAdminInit
 }
 
 export const tenantLogin = async (inputTenantLoginSchema: InputTenantLoginSchema): Promise<OutputTenantLoginSchema> => {
-    const citizen = await citizenDbController.getCitizenByTelegramUserId(inputTenantLoginSchema.telegramUserId)
+    const citizen = await citizenDbController
+        .getCitizenByTelegramUserId(inputTenantLoginSchema.telegramUserId)
+    const president: Citizen | null = await citizenDbController.getPresidentByBlockId(inputTenantLoginSchema.blockId)
 
+    let outputTenantLoginSchema: OutputTenantLoginSchema
     if (citizen) {
-        return citizen
+        outputTenantLoginSchema = citizen
+        outputTenantLoginSchema.presidentTelegramUserName = president?.telegramUserName
+
+        return outputTenantLoginSchema
     }
 
-    const tenant = await citizenDbController
+    let tenant = await citizenDbController
         .getTenant(inputTenantLoginSchema.telegramUserId, inputTenantLoginSchema.blockId)
 
     if (tenant) {
-        return tenant
+        outputTenantLoginSchema = tenant
+        outputTenantLoginSchema.presidentTelegramUserName = president?.telegramUserName
+
+        return outputTenantLoginSchema
     }
 
-    return citizenDbController.tenantLogin(inputTenantLoginSchema.blockId, inputTenantLoginSchema.telegramUserId)
+    outputTenantLoginSchema = await citizenDbController.tenantLogin(inputTenantLoginSchema)
+    outputTenantLoginSchema.presidentTelegramUserName = president?.telegramUserName
+
+    return outputTenantLoginSchema
 }
 
 export const tenantLogout = async (inputTenantLogoutSchema: InputTenantLogoutSchema): Promise<OutputTenantLogoutSchema> => {
@@ -84,9 +98,21 @@ export const tenantLogout = async (inputTenantLogoutSchema: InputTenantLogoutSch
     }
 }
 
+export const getInfo = async (telegramUserId: number): Promise<Citizen> => {
+    const citizen = await citizenDbController
+        .getCitizenByTelegramUserId(telegramUserId)
+
+    if (!citizen) {
+        throw createHttpError(404, "You are not a part of any blocks to get info about")
+    }
+
+    return citizen
+}
+
 export const citizenService = {
     presidentInit,
     tenantLogin,
     presidentDelete,
-    tenantLogout
+    tenantLogout,
+    getInfo
 }

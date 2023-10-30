@@ -7,6 +7,9 @@ export type MongooseDocument = Document & Citizen
 export const mongooseSchema: mongoose.Schema = new mongoose.Schema({
     type: String,
     blockId: String,
+    telegramUserName: {
+        type: String,
+    },
     telegramUserId: Number
 }, {
     timestamps: true,

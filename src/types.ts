@@ -19,9 +19,9 @@ export type InputAdminInit = z.infer<typeof inputAdminInitSchema>
 
 export type OutputAdminInit = z.infer<typeof outputAdminInitSchema>
 
-export type InputPresidentDeleteSchema = z.infer<typeof inputPresidentDeleteSchema>
+export type InputPresidentDelete = z.infer<typeof inputPresidentDeleteSchema>
 
-export type OutputPresidentDeleteSchema = z.infer<typeof outputPresidentDeleteSchema>
+export type OutputPresidentDelete= z.infer<typeof outputPresidentDeleteSchema>
 
 export type InputTenantLoginSchema = z.infer<typeof inputTenantLoginSchema>
 

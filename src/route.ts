@@ -1,5 +1,11 @@
 import {Routing} from "express-zod-api"
-import {presidentDeleteEndpoint, presidentInitEndpoint, tenantLoginEndpoint, tenantLogoutEndpoint} from "./endpoint"
+import {
+    getInfoEndpoint,
+    presidentDeleteEndpoint,
+    presidentInitEndpoint,
+    tenantLoginEndpoint,
+    tenantLogoutEndpoint
+} from "./endpoint"
 
 export const routing: Routing = {
     v1: {
@@ -11,7 +17,8 @@ export const routing: Routing = {
             tenant: {
                 login: tenantLoginEndpoint,
                 logout: tenantLogoutEndpoint,
-            }
+            },
+            info: getInfoEndpoint,
         }
     }
 }

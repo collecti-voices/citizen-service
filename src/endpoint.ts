@@ -1,11 +1,11 @@
 import { defaultEndpointsFactory } from "express-zod-api"
 import {
-    inputAdminInitSchema, inputPresidentDeleteSchema,
+    inputAdminInitSchema, inputGetInfoSchema, inputPresidentDeleteSchema,
     inputTenantLoginSchema, inputTenantLogoutSchema,
-    outputAdminInitSchema, outputPresidentDeleteSchema,
+    outputAdminInitSchema, outputGetInfoSchema, outputPresidentDeleteSchema,
     outputTenantLoginSchema, outputTenantLogoutSchema
 } from "./zodSchema";
-import {citizenService, tenantLogout} from "./citizenService";
+import {citizenService} from "./citizenService";
 
 
 export const presidentInitEndpoint = defaultEndpointsFactory.build({
@@ -42,4 +42,14 @@ export const tenantLogoutEndpoint = defaultEndpointsFactory.build({
     handler: async ({input, options, logger }) => {
         return citizenService.tenantLogout(input)
     },
+})
+
+export const getInfoEndpoint = defaultEndpointsFactory.build({
+    method: "get",
+    input: inputGetInfoSchema,
+    output: outputGetInfoSchema,
+    handler: async ({input, options, logger }) => {
+        return citizenService.getInfo(input.telegramUserId)
+    },
+
 })

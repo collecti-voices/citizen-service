@@ -8,13 +8,15 @@ export const citizenSchema = z.object({
     _id: z.any(),
     type: citizenTypeSchema,
     blockId: z.string(),
+    telegramUserName: z.string(),
     telegramUserId: z.number(),
     createdAt: z.date(),
     updatedAt: z.date()
 })
 
 export const inputAdminInitSchema = z.object({
-    telegramUserId: z.number()
+    telegramUserId: z.number(),
+    telegramUserName: z.string(),
 })
 
 export const outputAdminInitSchema = z.object({
@@ -32,10 +34,14 @@ export const outputPresidentDeleteSchema = z.object({
 
 export const inputTenantLoginSchema = z.object({
     blockId: z.string(),
-    telegramUserId: z.number()
+    telegramUserId: z.number(),
+    telegramUserName: z.string()
 })
 
-export const outputTenantLoginSchema = citizenSchema
+export const outputTenantLoginSchema = citizenSchema.merge(z.object({
+    presidentTelegramUserName: z.string().optional()
+}))
+
 export const inputTenantLogoutSchema = z.object({
     telegramUserId: z.string().transform((value) => parseInt(value))
 })
@@ -43,3 +49,9 @@ export const inputTenantLogoutSchema = z.object({
 export const outputTenantLogoutSchema = z.object({
     blockId: z.string()
 })
+
+export const inputGetInfoSchema = z.object({
+    telegramUserId: z.string().transform((value) => parseInt(value))
+})
+
+export const outputGetInfoSchema = citizenSchema
